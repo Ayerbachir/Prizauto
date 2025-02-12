@@ -1,6 +1,5 @@
 <template>
-
-  <div class="table-container" >
+  <div class="table-container">
     <div class="header">
       <h1><b style="color:#4ade80; font-size: 35px;">R</b>eservation <b style="color:#4ade80; font-size: 35px;">L</b>ist</h1>
     </div>
@@ -13,277 +12,263 @@
         <button class="btn" @click="openModal1">Add</button>  
       </div>
     
-    <table class="car-table">
-      <thead>
-        <tr>
-          <th>Client Name</th>
-          <th>Car Name</th>
-          <th>From</th>
-          <th>Until</th>
-          <th>Total Price</th>
-          <th>Paid</th>
-          <th>Modify</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="rese in filteredData" :key="rese.id"  >
-          <td>{{ rese.user_name }}</td>
-          <td>{{ rese.car_name}}/{{ rese.car_model }}/{{ rese.matricul }}</td>
-          <td>{{ rese.from }}</td>
-          <td>{{ rese.until }}</td>
-          <td>{{ rese.price }}</td>
-          <td>{{ rese.paid }}</td>
-          <td>
-            <button class="btn tn" @click="hand(rese)">Edit</button>
-            <button class="btn tn" @click="updateState(rese)" >State</button>
-            <button class="btn tn" @click="delet(rese)">Delete</button>
-          </td> 
-        </tr>
-      </tbody>
-    </table>
+      <table class="car-table">
+        <thead>
+          <tr>
+            <th>Client Name</th>
+            <th>Car Name</th>
+            <th>From</th>
+            <th>Until</th>
+            <th>Total Price</th>
+            <th>Paid</th>
+            <th>Modify</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="rese in filteredData" :key="rese.id">
+            <td>{{ rese.user_name }}</td>
+            <td>{{ rese.car_name}}/{{ rese.car_model }}/{{ rese.matricul }}</td>
+            <td>{{ rese.from }}</td>
+            <td>{{ rese.until }}</td>
+            <td>{{ rese.price }}</td>
+            <td>{{ rese.paid }}</td>
+            <td>
+              <button class="btn tn" @click="hand(rese)">Edit</button>
+              <button class="btn tn" @click="updateState(rese)" >State</button>
+              <button class="btn tn" @click="delet(rese)">Delete</button>
+            </td> 
+          </tr>
+        </tbody>
+      </table>
 
-    <div v-if="isModalVisible1" class="modal-overlay" @click="closeModal1">
-<div class="modal-content" @click.stop>
-  <h2>Add Reservation</h2>
-  <form @submit.prevent="addCar"> 
+      <div v-if="isModalVisible1" class="modal-overlay" @click="closeModal1">
+        <div class="modal-content" @click.stop>
+          <h2>Add Reservation</h2>
+          <form @submit.prevent="addCar">
+            <label for="Uname" class="inp">Client Name:</label>
+            <select v-model="newR.user_id">
+              <option v-for="user in users" :key="user.id" :value="user.id" v-show="user.stateu===0">{{ user.name }}</option>
+            </select><br>
 
-    <label for="Uname" class="inp">Client Name:</label>
-    <select v-model="newR.user_id">
-      <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
-    </select><br>
+            <label for="Uname" class="inp">Cars Name:</label>
+            <select v-model="newR.car_id">
+              <option v-for="car in cars" :key="car.id" :value="car.id" v-show="car.state==='Available'">{{ car.name }}/{{ car.model}}/{{ car.matricul }}</option>
+            </select><br>
 
-    <label for="Uname" class="inp">Cars Name:</label>
-    <select v-model="newR.car_id">
-      <option v-for="car in cars" :key="car.id" :value="car.id" v-show="car.state==='Available'">{{ car.name }}/{{ car.model}}/{{ car.matricul }}</option>
-    </select><br>
+            <label for="from">From:</label>
+            <input type="date" id="from" v-model="newR.from"><br>
 
-    <label for="from">From:</label>
-    <input type="date" id="from" v-model="newR.from" required><br>
+            <label for="days">Days:</label>
+            <input type="number" id="days" v-model="newR.until" required><br>
 
-    <label for="days">Days:</label>
-    <input type="number" id="days" v-model="newR.until" required><br>
+            <label for="price">Total Price:</label>
+            <input type="number" id="price" :value="calculatedPrice" disabled><br>
 
-    <label for="price">Total Price:</label>
-    <input type="number" id="price" :value="calculatedPrice" disabled><br>
+            <label for="paid">Paid:</label>
+            <input type="text" id="paid" v-model="newR.paid"><br>
 
-    <label for="paid">Paid:</label>
-    <input type="number" id="paid" v-model="newR.paid"><br>
-
-    <button type="submit" class="btn">Add</button>
-    <button type="button" class="btn cancel-btn" @click="closeModal1">Cancel</button>
-  </form>
-</div>
-</div>
-
-    <div v-if="isModalVisible3" class="modal-overlay" @click="closeModal1">
-      <div class="modal-content" @click.stop>
-        <h2>Edit User</h2>
-        <form @submit.prevent="edit()">
-
-          <label for="name">Client Name:</label>
-          <input type="text" id="name"  v-model="newR.user_id"  :disabled=true >
-
-          <label for="model">Cars Name:</label>
-          <input type="text" id="model" :disabled=true  v-model="newR.car_id" >
-
-          <label for="price">From:</label>
-          <input type="date" id="price" v-model="newR.from" >
-
-          <label for="state">Days:</label>
-          <input type="text" id="state" v-model="newR.until" required>
-
-          <label for="nci">Total Price:</label>
-          <input type="number" id="nci" v-model="newR.price"  :disabled="true">
-
-          <label for="carname">Paid:</label>
-          <input type="text" id="carname" v-model="newR.paid" >
-
-          <button type="submit" class="btn">Edit</button>
-          <button type="button" class="btn" @click="closeModal1">Cancel</button>
-        </form>
+            <button type="submit" class="btn">Add</button>
+            <button type="button" class="btn cancel-btn" @click="closeModal1">Cancel</button>
+          </form>
+        </div>
       </div>
-    </div>
+
+      <!-- Modal for Edit -->
+      <div v-if="isModalVisible3" class="modal-overlay" @click="closeModal1">
+        <div class="modal-content" @click.stop>
+          <h2>Edit Reservation</h2>
+          <form @submit.prevent="edit">
+            <label for="name">Client Name:</label>
+            <input type="text" id="name" v-model="newR.user_id" disabled>
+
+            <label for="model">Car Name:</label>
+            <input type="text" id="model" v-model="newR.car_id" disabled>
+
+            <label for="price">From:</label>
+            <input type="date" id="price" v-model="newR.from" disabled>
+
+            <label for="state">Days:</label>
+            <input type="text" id="state" v-model="newR.until" required>
+
+            <label for="nci">Total Price:</label>
+            <input type="number" id="nci" v-model="newR.price" disabled>
+
+            <label for="carname">Paid:</label>
+            <input type="text" id="carname" v-model="newR.paid">
+
+            <button type="submit" class="btn">Edit</button>
+            <button type="button" class="btn" @click="closeModal1">Cancel</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
 <script>
 import axios from 'axios'
 
 export default {
-data() {
-  return {
-    showNotification: false,
-    notificationMessage: "",
-    isModalVisible1:false,
-    isModalVisible2:false,
-    isModalVisible3:false,
-    users: [], 
-    cars: [],
-    reseData: [],
-    newR: {
-      id:'',
-      user_id: null, 
-      car_id: null, 
-      from: "", 
-      until: 0,
-      price:0,
-      paid: 0,
-      state:0,
+  data() {
+    return {
+      showNotification: false,
+      notificationMessage: "",
+      isModalVisible1: false,
+      isModalVisible3: false,
+      users: [],
+      cars: [],
+      reseData: [],
+      newR: {
+        id: '',
+        user_id: null, 
+        car_id: null, 
+        from: "", 
+        until: 0,
+        price: 0,
+        paid: 0,
+        state: 0,
+      },
+    };
+  },
+  computed: {
+    calculatedPrice() {
+      const selectedCar = this.cars.find(car => car.id === this.newR.car_id);
+      return selectedCar ? selectedCar.price * this.newR.until : 0;
     },
-  };
-},
-computed: {
-  calculatedPrice() {
-    const selectedCar = this.cars.find(car => car.id === this.newR.car_id);
-    return selectedCar ? selectedCar.price * this.newR.until : 0;
-  },filteredData() {
-      return this.reseData.filter(rese => rese.state ==='0');
+    filteredData() {
+      return this.reseData.filter(rese => rese.state === 0);
     }
-  
-},mounted(){
-  this.fetchCars();
-  this.fetchUsers();
-  this.fetchCU();
-  
-},
-methods: {
-  openModal1(){
+  },
+  mounted() {
     this.fetchCars();
-    this.isModalVisible1=true;
+    this.fetchUsers();
+    this.fetchCU();
+  },
+  methods: {
+    openModal1() {
+      this.fetchCars();
+      this.fetchUsers();
+      this.isModalVisible1 = true;
     },
 
-  openModal3(rese) {
-      this.newR.user_id=rese.user_name;
-      this.newR.car_id=rese.car_name;
-      this.newR.from=rese.from;
-      this.newR.until=rese.until;
-      this.newR.price=rese.price;
-      this.newR.paid=rese.paid;
-      this.newR.state=rese.state;
+    openModal3(rese) {
+      this.newR.user_id = rese.user_name;
+      this.newR.car_id = rese.car_name;
+      this.newR.from = rese.from;
+      this.newR.until = rese.until;
+      this.newR.price = rese.price;
+      this.newR.paid = rese.paid;
+      this.newR.state = rese.state;
       this.isModalVisible3 = true;
     },
- 
-  addCar() {
-    this.newR.price = this.calculatedPrice;
-    axios.post('http://127.0.0.1:8000/api/caruser', this.newR)
-      .then(() => {
-        this.notificationMessage = `Reservation  successfully!`;
-        this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 1500);
-        this.fetchCU();
-        this.closeModal1();
-      })
-      .catch(error => {
-        console.error("Error adding reservation:", error);
-        this.notificationMessage = "Error adding  reservation. Please try again.";
-        this.showNotification = true;
-      });
-      
-  },
-  edit() {
-},
-  closeModal1() {
-    this.isModalVisible1 = false;
-    this.isModalVisible2 = false;
-    this.isModalVisible3 = false;
-    this.newR= {
-      id:'',
-      user_id: null, 
-      car_id: null, 
-      from: "", 
-      until: 0,
-      price:0,
-      paid: 0,
-      state:0,
-    }
-  },
-  fetchCars() {
-    axios.get('http://127.0.0.1:8000/api/cars')
-      .then(response => {
-        this.cars = response.data;
-      })
-      .catch(error => {
-        console.error("Error fetching cars:", error);
-      });
-  },
-  fetchUsers() {
-    axios.get('http://127.0.0.1:8000/api/users')
-      .then(response => {
-        this.users = response.data;
-      })
-      .catch(error => {
-        console.error("Error fetching users:", error);
-      });
-  },
 
-  fetchCU() {
-    axios.get('http://127.0.0.1:8000/api/reservations')
-      .then(response => {
-        this.reseData = response.data;
-      })
-      .catch(error => {
-        console.error("Error fetching users:", error);
-      });
-  },
-  hand(rese){
-      this.openModal3(rese);
-      if(!this.isModalVisible3){
-        this.edit();
+    addCar() {
+      this.newR.price = this.calculatedPrice;
+      axios.post('http://127.0.0.1:8000/api/caruser', this.newR)
+        .then(() => {
+          this.notificationMessage = 'Reservation successfully added!';
+          this.showNotification = true;
+          setTimeout(() => {
+            this.showNotification = false;
+          }, 1500);
+          this.fetchCU();
+          this.closeModal1();
+        })
+        .catch(error => {
+          console.error("Error adding reservation:", error);
+          this.notificationMessage = "Error adding reservation. Please try again.";
+          this.showNotification = true;
+        });
+    },
+
+    closeModal1() {
+      this.isModalVisible1 = false;
+      this.isModalVisible3 = false;
+      this.newR = {
+        id: '',
+        user_id: null,
+        car_id: null,
+        from: "",
+        until: 0,
+        price: 0,
+        paid: 0,
+        state: 0,
+      };
+    },
+
+    fetchCars() {
+      axios.get('http://127.0.0.1:8000/api/cars')
+        .then(response => {
+          this.cars = response.data;
+        })
+        .catch(error => {
+          console.error("Error fetching cars:", error);
+        });
+    },
+
+    fetchUsers() {
+      axios.get('http://127.0.0.1:8000/api/users')
+        .then(response => {
+          this.users = response.data;
+        })
+        .catch(error => {
+          console.error("Error fetching users:", error);
+        });
+    },
+
+    fetchCU() {
+      axios.get('http://127.0.0.1:8000/api/reservations')
+        .then(response => {
+          this.reseData = response.data;
+        })
+        .catch(error => {
+          console.error("Error fetching reservations:", error);
+        });
+    },
+
+    updateState(rese) {
+      axios.patch(`http://127.0.0.1:8000/api/caruser/${rese.id}/state`)
+        .then(response => {
+          this.notificationMessage = 'State updated successfully!';
+          this.showNotification = true;
+          setTimeout(() => {
+            this.showNotification = false;
+          }, 1500);
+          
+          this.fetchCU();
+          
+        })
+        .catch(error => {
+          console.error("Error updating state:", error);
+          this.notificationMessage = "Error updating state. Please try again.";
+          this.showNotification = true;
+        });
+    },
+
+    delet(rese) {
+      if (confirm('Are you sure you want to delete this reservation?')) {
+        axios.delete(`http://127.0.0.1:8000/api/caruser/${rese.id}`)
+          .then(() => {
+            this.reseData = this.reseData.filter(c => c.id !== rese.id);
+            this.notificationMessage = `Reservation for car ${rese.car_name} deleted successfully!`;
+            this.showNotification = true;
+            setTimeout(() => {
+              this.showNotification = false;
+            }, 1000);
+          })
+          .catch((error) => {
+            console.error("Error deleting reservation:", error);
+            this.notificationMessage = "Error deleting reservation. Please try again.";
+            this.showNotification = true;
+          });
       }
     },
-    updateState(rese) {
-  axios.patch(`http://127.0.0.1:8000/api/caruser/${rese.id}/state`)
-    .then(response => {
-      console.log(response.data.message); 
-      this.notificationMessage = ` updating successfully!`;
-      this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 1500);
-      this.fetchCU();
-      console.log(this.reseData); 
-    })
-    .catch(error => {
-      console.error("Error updating state:", error);
-      this.notificationMessage = "Error deleting the reservation. Please try again.";
-      this.showNotification = true;
-    });
-    this.filteredData;
-},
-delet(rese) {
-  console.log(rese.id);
 
-  if (confirm(`Are you sure you want to delete this reservation?`)) {
-    this.notificationMessage = `Reservation for car ${rese.car_name} deleted successfully!`;
-        this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 1000);
-    this.updateState(rese);
-    axios
-      .delete(`http://127.0.0.1:8000/api/caruser/${rese.id}`)
-      .then(() => {
-        this.reseData = this.reseData.filter((c) => c.id !== rese.id);
-        
-      })
-      .catch((error) => {
-        console.error("Error deleting reservation:", error);
-
-        this.notificationMessage = "Error deleting the reservation. Please try again.";
-        this.showNotification = true;
-      });
-
-  }
-},
-
-
-
-
-}
+    hand(rese) {
+      this.openModal3(rese);
+    },
+  },
 };
-
 </script>
 
 <style scoped>

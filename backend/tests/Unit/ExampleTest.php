@@ -2,15 +2,28 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
-
-class ExampleTest extends TestCase
+use App\Models\CarUser;
+use App\Models\Usser;
+use App\Models\Car;
+use Tests\TestCase;
+class ReservationTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
-    public function test_that_true_is_true(): void
+    public function test_create_reservation()
     {
-        $this->assertTrue(true);
+        $Usser = Usser::factory()->create();
+        $car = Car::factory()->create(['state' => 'available']);
+
+        $reservation = CarUser::create([
+            'user_id' => $Usser->id,
+            'car_id' => $car->id,
+            'start_date' => now(),
+            'end_date' => now()->addDays(3),
+            'price' => 150
+        ]);
+
+        $this->assertDatabaseHas('reservations', [
+            'user_id' => $Usser->id,
+            'car_id' => $car->id
+        ]);
     }
 }

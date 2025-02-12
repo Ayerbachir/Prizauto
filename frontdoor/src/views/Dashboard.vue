@@ -25,8 +25,8 @@
           <th>Cars</th>
           <th>Users</th>
           <th>Reservation</th>
+          <th>Car Available</th>
           <th>Earned DT</th>
-          
         </tr>
       </thead>
       <tbody>
@@ -34,6 +34,7 @@
           <td>{{ cars.length }}</td>
           <td>{{ users.length }}</td>
           <td>{{ filteredData.length }}</td>
+          <td>{{ (cars.length)-filteredData.length }}</td>
           <td>{{ earnData }}</td>
         </tr>
       </tbody>
@@ -60,12 +61,12 @@ export default {
     };
   },computed: {
     filteredData() {
-      return this.reseData.filter((rese) => rese.state === "0");
+      return this.reseData.filter((rese) => rese.state === 0);
     },
     earnData() {
     return this.reseData
-      .filter((rese) => rese.state === "1")
-      .reduce((total, rese) => total + rese.price, 0);
+      .filter((rese) => rese.state === 1)
+      .reduce((total, rese) => total + rese.paid, 0);
   },
   },
   mounted() {

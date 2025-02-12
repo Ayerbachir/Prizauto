@@ -8,19 +8,38 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function storeU(Request $request)
-    {
-        $validated = $request->validate([
-            'name'  => 'required|string',
-            'email' => 'required|string',
-            'password' => 'required|string',
-            'phone' => 'required|digits:8',
-            'nci'   => 'required|digits:8', 
-        ]);
+{
+    // Validate incoming request
+    $validated = $request->validate([
+        'name'  => 'required|string',
+        'email' => 'required|string',
+        'password' => 'required|string',
+        'phone' => 'required|digits:8',
+        'nci'   => 'required|digits:8',
+        'stateu' => 'required|integer|in:0,1',
+    ]);
 
-        $user = Usser::create($validated);
+    // Check if 'phone' or 'nci' already exists in the database
+    $existingUser = Usser::where('phone', $validated['phone'])->first();
+    $existingNci = Usser::where('nci', $validated['nci'])->first();
 
-        return response()->json($user, 201);
+    // If either phone or nci exists, return error
+    if ($existingUser) {
+        return response()->json(['message' => 'User with this phone number already exists'], 400);
     }
+
+    if ($existingNci) {
+        return response()->json(['message' => 'User with this NCI already exists'], 400);
+    }
+
+    // Set stateu to 0
+    $validated['stateu'] = 0;
+
+    // Create the new user
+    $user = Usser::create($validated);
+
+    return response()->json($user, 201);
+}
 
     public function destroyU($id)
     {

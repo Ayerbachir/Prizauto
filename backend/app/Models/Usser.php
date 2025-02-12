@@ -20,6 +20,7 @@ class Usser extends Model
         'password',
         'phone',
         'nci',
+        'stateu',
     ];
 
     /**

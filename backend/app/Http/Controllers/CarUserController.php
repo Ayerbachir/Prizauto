@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\CarUser;
 use App\Models\Car;
+use App\Models\Usser;
 use Illuminate\Http\Request;
 
 class CarUserController extends Controller
@@ -21,12 +22,18 @@ class CarUserController extends Controller
 
     $validated['state'] = '0';
 
+
     $carUser = CarUser::create($validated);
 
     $car = Car::find($validated['car_id']);
     if ($car) {
         $car->state = 'In progress'; 
         $car->save();
+    }
+    $usser = Usser::find($validated['user_id']);
+    if ($usser) {
+        $usser->stateu =1; 
+        $usser->save();
     }
 
     return response()->json($carUser, 201);
@@ -61,6 +68,7 @@ class CarUserController extends Controller
                 'price' => $reservation->price,
                 'paid' => $reservation->paid,
                 'state' =>$reservation ->state,
+                'stateu' =>$reservation->user->stateu,
             ];
         });
 
@@ -82,6 +90,11 @@ class CarUserController extends Controller
         $car->state = 'Available';
         $car->save();
     }
+    $usser =$carUser->user;
+    if($usser){
+        $usser->stateu='0';
+        $usser->save();
+    }
 
     return response()->json(['message' => 'State updated to Available successfully'], 200);
 }
@@ -98,26 +111,20 @@ public function destroy($id)
     }
     public function editRes(Request $request, $id){
         $validated = $request->validate([
-            'name'  => 'required|string',
-            'model' => 'required|string',
-            'matricul' =>'required|string',
-            'price' => 'required|numeric',
-            'state' => 'required|string|in:Available,In progress',
+            'until' => 'required|integer', 
+            'paid' => 'required|numeric',
         ]);
 
         $car = CarUser::find($id);
 
         if (!$car) {
-            return response()->json(['message' => 'Car not found'], 404);
+            return response()->json(['message' => 'reservation  not found'], 404);
         }
-        $car->name = $validated['name'];
-        $car->model = $validated['model'];
-        $car->matricul = $validated['matricul'];
-        $car->price = $validated['price'];
-        $car->state = $validated['state'];
+        $car->until = $validated['price'];
+        $car->paid = $validated['paid'];
         $car->save();
 
-    return response()->json(['message' => 'Car updated successfully', 'car' => $car], 200);
+    return response()->json(['message' => 'reservation updated successfully'], 200);
     
 }
     

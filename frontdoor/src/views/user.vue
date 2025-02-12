@@ -27,7 +27,7 @@
           <th>Name</th>
           <th>Email</th>
           <th>Phone</th>
-          <th>Nci</th>
+          <th>Cin</th>
           <th>Modify</th>
         </tr>
       </thead>
@@ -140,6 +140,7 @@ export default {
         password: '',
         phone: '',
         nci: '',
+        stateu:'0',
       }
     }
   },
@@ -217,13 +218,13 @@ fetchCars() {
       this.showNotification = true;
       setTimeout(() => {
           this.showNotification = false;
-        }, 1000);
+        }, 1500);
       this.fetchCars(); 
       this.closeModal1();
     })
     .catch(error => {
       console.error("Error adding car:", error);
-      this.notificationMessage = "Error adding  User. Please try again.";
+      this.notificationMessage = "Cin and Phone number unique check it !";
         this.showNotification = true;
     });
     

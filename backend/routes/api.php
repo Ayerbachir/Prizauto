@@ -17,6 +17,8 @@ Route::post('/caruser', [CarUserController::class, 'storeCU']);
 
 Route::delete('/cars/{id}', [CarController::class, 'destroy']);
 Route::patch('/cars/{id}/edit', [CarController::class, 'editCar']);
+Route::patch('/reservation/{id}/edit', [CarUserController::class, 'editRes']);
+
 Route::patch('caruser/{id}/state', [CarUserController::class, 'updateState']);
 Route::delete('/caruser/{id}', [CarUserController::class, 'destroy']);
 

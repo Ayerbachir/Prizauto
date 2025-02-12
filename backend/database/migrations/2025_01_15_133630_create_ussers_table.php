@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('password');
             $table->integer('phone');
-            $table->integer('nci');
+            $table->integer('nci') ;
+            $table->integer('stateu');
             $table->timestamps();
         });
     }

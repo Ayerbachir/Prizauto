@@ -258,7 +258,6 @@ export default {
         this.edit();
       }
     },
-
   }
 }
 </script>
